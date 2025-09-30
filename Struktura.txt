@@ -1,0 +1,13 @@
+cloudlearn-openstack/
+├── scripts/
+│   ├── deploy-cloudlearn.sh
+│   ├── status-cloudlearn.sh
+│   ├── cleanup-cloudlearn.sh
+│   └── deploy-ivo-only.sh
+├── config/
+│   └── users.csv
+├── docs/
+│   ├── ARCHITECTURE.md
+│   └── DEPLOYMENT_GUIDE.md
+├── README.md
+└── .gitignore
