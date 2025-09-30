@@ -1,4 +1,10 @@
+# Kreiraj users.csv
+@"
 ime;prezime;rola
 marko;maric;instruktor
 ante;antic;student
 ivo;ivic;student
+"@ | Out-File -FilePath "users.csv" -Encoding UTF8
+
+# Provjeri je li kreirano
+Get-Content users.csv

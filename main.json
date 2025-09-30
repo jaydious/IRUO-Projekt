@@ -1,0 +1,843 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "4919372063460972822"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope"
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "test"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2021-04-01",
+      "name": "[format('rg-cloudlearn-{0}', parameters('environment'))]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "course": "test",
+        "environment": "[parameters('environment')]",
+        "project": "cloudlearn",
+        "deployment": "bicep"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "network-deployment",
+      "resourceGroup": "[format('rg-cloudlearn-{0}', parameters('environment'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "environment": {
+            "value": "[parameters('environment')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "50344456296072832"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "environment": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "subnets": [
+              {
+                "name": "subnet-jump",
+                "properties": {
+                  "addressPrefix": "10.0.1.0/24"
+                }
+              },
+              {
+                "name": "subnet-marko-maric",
+                "properties": {
+                  "addressPrefix": "10.0.10.0/24"
+                }
+              },
+              {
+                "name": "subnet-ante-antic",
+                "properties": {
+                  "addressPrefix": "10.0.20.0/24"
+                }
+              },
+              {
+                "name": "subnet-ivo-ivic",
+                "properties": {
+                  "addressPrefix": "10.0.30.0/24"
+                }
+              }
+            ]
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks",
+              "apiVersion": "2021-05-01",
+              "name": "[format('vnet-cloudlearn-{0}', parameters('environment'))]",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test"
+              },
+              "properties": {
+                "addressSpace": {
+                  "addressPrefixes": [
+                    "10.0.0.0/16"
+                  ]
+                },
+                "subnets": "[variables('subnets')]"
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2021-05-01",
+              "name": "nsg-marko-maric",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "marko.maric",
+                "role": "instruktor"
+              },
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "Allow-SSH-From-Any",
+                    "properties": {
+                      "description": "Allow SSH access from anywhere",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "22",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "Allow-HTTP-From-Any",
+                    "properties": {
+                      "description": "Allow HTTP from anywhere",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "80",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Inbound"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2021-05-01",
+              "name": "nsg-ante-antic",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "ante.antic",
+                "role": "student"
+              },
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "Allow-SSH-From-Any",
+                    "properties": {
+                      "description": "Allow SSH access from anywhere",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "22",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Inbound"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkSecurityGroups",
+              "apiVersion": "2021-05-01",
+              "name": "nsg-ivo-ivic",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "ivo.ivic",
+                "role": "student"
+              },
+              "properties": {
+                "securityRules": [
+                  {
+                    "name": "Allow-SSH-From-Any",
+                    "properties": {
+                      "description": "Allow SSH access from anywhere",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "22",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 100,
+                      "direction": "Inbound"
+                    }
+                  },
+                  {
+                    "name": "Allow-HTTP-From-Any",
+                    "properties": {
+                      "description": "Allow HTTP from anywhere",
+                      "protocol": "Tcp",
+                      "sourcePortRange": "*",
+                      "destinationPortRange": "80",
+                      "sourceAddressPrefix": "*",
+                      "destinationAddressPrefix": "*",
+                      "access": "Allow",
+                      "priority": 110,
+                      "direction": "Inbound"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2021-05-01",
+              "name": "[format('pip-jump-{0}', parameters('environment'))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static"
+              },
+              "tags": {
+                "course": "test"
+              }
+            }
+          ],
+          "outputs": {
+            "vnetName": {
+              "type": "string",
+              "value": "[format('vnet-cloudlearn-{0}', parameters('environment'))]"
+            },
+            "vnetId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/virtualNetworks', format('vnet-cloudlearn-{0}', parameters('environment')))]"
+            },
+            "subnetRefs": {
+              "type": "array",
+              "value": [
+                {
+                  "name": "subnet-jump",
+                  "id": "[format('{0}/subnets/subnet-jump', resourceId('Microsoft.Network/virtualNetworks', format('vnet-cloudlearn-{0}', parameters('environment'))))]"
+                },
+                {
+                  "name": "subnet-marko-maric",
+                  "id": "[format('{0}/subnets/subnet-marko-maric', resourceId('Microsoft.Network/virtualNetworks', format('vnet-cloudlearn-{0}', parameters('environment'))))]"
+                },
+                {
+                  "name": "subnet-ante-antic",
+                  "id": "[format('{0}/subnets/subnet-ante-antic', resourceId('Microsoft.Network/virtualNetworks', format('vnet-cloudlearn-{0}', parameters('environment'))))]"
+                },
+                {
+                  "name": "subnet-ivo-ivic",
+                  "id": "[format('{0}/subnets/subnet-ivo-ivic', resourceId('Microsoft.Network/virtualNetworks', format('vnet-cloudlearn-{0}', parameters('environment'))))]"
+                }
+              ]
+            },
+            "nsgRefs": {
+              "type": "array",
+              "value": [
+                {
+                  "userName": "marko.maric",
+                  "nsgName": "nsg-marko-maric",
+                  "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-marko-maric')]",
+                  "role": "instruktor"
+                },
+                {
+                  "userName": "ante.antic",
+                  "nsgName": "nsg-ante-antic",
+                  "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-ante-antic')]",
+                  "role": "student"
+                },
+                {
+                  "userName": "ivo.ivic",
+                  "nsgName": "nsg-ivo-ivic",
+                  "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-ivo-ivic')]",
+                  "role": "student"
+                }
+              ]
+            },
+            "jumpPublicIPId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Network/publicIPAddresses', format('pip-jump-{0}', parameters('environment')))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('rg-cloudlearn-{0}', parameters('environment')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "storage-deployment",
+      "resourceGroup": "[format('rg-cloudlearn-{0}', parameters('environment'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "environment": {
+            "value": "[parameters('environment')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "17542076593715770837"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "environment": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-09-01",
+              "name": "[format('stcl{0}', uniqueString(resourceGroup().id))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "StorageV2",
+              "tags": {
+                "course": "test",
+                "environment": "[parameters('environment')]",
+                "type": "general-storage"
+              },
+              "properties": {
+                "accessTier": "Hot",
+                "supportsHttpsTrafficOnly": true,
+                "minimumTlsVersion": "TLS1_2"
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2021-09-01",
+              "name": "[format('{0}/default/object-storage', format('stcl{0}', uniqueString(resourceGroup().id)))]",
+              "properties": {
+                "publicAccess": "None"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', format('stcl{0}', uniqueString(resourceGroup().id)))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+              "apiVersion": "2021-09-01",
+              "name": "[format('{0}/default/file-storage', format('stcl{0}', uniqueString(resourceGroup().id)))]",
+              "properties": {
+                "accessTier": "TransactionOptimized",
+                "shareQuota": 5120
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', format('stcl{0}', uniqueString(resourceGroup().id)))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "storageAccountName": {
+              "type": "string",
+              "value": "[format('stcl{0}', uniqueString(resourceGroup().id))]"
+            },
+            "storageAccountId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', format('stcl{0}', uniqueString(resourceGroup().id)))]"
+            },
+            "blobEndpoint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', format('stcl{0}', uniqueString(resourceGroup().id))), '2021-09-01').primaryEndpoints.blob]"
+            },
+            "fileEndpoint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', format('stcl{0}', uniqueString(resourceGroup().id))), '2021-09-01').primaryEndpoints.file]"
+            },
+            "blobContainerName": {
+              "type": "string",
+              "value": "object-storage"
+            },
+            "fileShareName": {
+              "type": "string",
+              "value": "file-storage"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('rg-cloudlearn-{0}', parameters('environment')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "compute-deployment",
+      "resourceGroup": "[format('rg-cloudlearn-{0}', parameters('environment'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "environment": {
+            "value": "[parameters('environment')]"
+          },
+          "subnetRefs": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-cloudlearn-{0}', parameters('environment'))), 'Microsoft.Resources/deployments', 'network-deployment'), '2022-09-01').outputs.subnetRefs.value]"
+          },
+          "nsgRefs": {
+            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-cloudlearn-{0}', parameters('environment'))), 'Microsoft.Resources/deployments', 'network-deployment'), '2022-09-01').outputs.nsgRefs.value]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.37.4.10188",
+              "templateHash": "10022803914803102330"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "environment": {
+              "type": "string"
+            },
+            "subnetRefs": {
+              "type": "array"
+            },
+            "nsgRefs": {
+              "type": "array"
+            },
+            "adminUsername": {
+              "type": "string",
+              "defaultValue": "azureuser"
+            },
+            "adminPassword": {
+              "type": "securestring"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Network/publicIPAddresses",
+              "apiVersion": "2021-05-01",
+              "name": "[format('pip-jump-{0}', parameters('environment'))]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "Static"
+              },
+              "tags": {
+                "course": "test"
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2021-05-01",
+              "name": "nic-marko-maric-jump",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "marko.maric",
+                "type": "jump-host"
+              },
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig1",
+                    "properties": {
+                      "privateIPAllocationMethod": "Dynamic",
+                      "subnet": {
+                        "id": "[parameters('subnetRefs')[0].id]"
+                      },
+                      "publicIPAddress": {
+                        "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('pip-jump-{0}', parameters('environment')))]"
+                      }
+                    }
+                  }
+                ],
+                "networkSecurityGroup": {
+                  "id": "[parameters('nsgRefs')[0].nsgId]"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', format('pip-jump-{0}', parameters('environment')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2021-05-01",
+              "name": "nic-ante-antic-jump",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "ante.antic",
+                "type": "jump-host"
+              },
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig1",
+                    "properties": {
+                      "privateIPAllocationMethod": "Dynamic",
+                      "subnet": {
+                        "id": "[parameters('subnetRefs')[0].id]"
+                      }
+                    }
+                  }
+                ],
+                "networkSecurityGroup": {
+                  "id": "[parameters('nsgRefs')[1].nsgId]"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Network/networkInterfaces",
+              "apiVersion": "2021-05-01",
+              "name": "nic-ivo-ivic-web",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "ivo.ivic",
+                "type": "wordpress"
+              },
+              "properties": {
+                "ipConfigurations": [
+                  {
+                    "name": "ipconfig1",
+                    "properties": {
+                      "privateIPAllocationMethod": "Dynamic",
+                      "subnet": {
+                        "id": "[parameters('subnetRefs')[3].id]"
+                      }
+                    }
+                  }
+                ],
+                "networkSecurityGroup": {
+                  "id": "[parameters('nsgRefs')[2].nsgId]"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2021-11-01",
+              "name": "vm-marko-maric-jump",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "marko.maric",
+                "role": "instruktor",
+                "type": "jump-host",
+                "environment": "[parameters('environment')]"
+              },
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "Standard_B1s"
+                },
+                "storageProfile": {
+                  "imageReference": {
+                    "publisher": "Canonical",
+                    "offer": "0001-com-ubuntu-server-jammy",
+                    "sku": "22_04-lts-gen2",
+                    "version": "latest"
+                  },
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "diskSizeGB": 32,
+                    "managedDisk": {
+                      "storageAccountType": "StandardSSD_LRS"
+                    },
+                    "caching": "ReadWrite"
+                  },
+                  "dataDisks": [
+                    {
+                      "createOption": "Empty",
+                      "lun": 0,
+                      "diskSizeGB": 32,
+                      "managedDisk": {
+                        "storageAccountType": "StandardSSD_LRS"
+                      }
+                    }
+                  ]
+                },
+                "osProfile": {
+                  "computerName": "vm-marko-jump",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]"
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', 'nic-marko-maric-jump')]"
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', 'nic-marko-maric-jump')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2021-11-01",
+              "name": "vm-ante-antic-jump",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "ante.antic",
+                "role": "student",
+                "type": "jump-host",
+                "environment": "[parameters('environment')]"
+              },
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "Standard_B1s"
+                },
+                "storageProfile": {
+                  "imageReference": {
+                    "publisher": "Canonical",
+                    "offer": "0001-com-ubuntu-server-jammy",
+                    "sku": "22_04-lts-gen2",
+                    "version": "latest"
+                  },
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "diskSizeGB": 32,
+                    "managedDisk": {
+                      "storageAccountType": "StandardSSD_LRS"
+                    },
+                    "caching": "ReadWrite"
+                  },
+                  "dataDisks": [
+                    {
+                      "createOption": "Empty",
+                      "lun": 0,
+                      "diskSizeGB": 32,
+                      "managedDisk": {
+                        "storageAccountType": "StandardSSD_LRS"
+                      }
+                    }
+                  ]
+                },
+                "osProfile": {
+                  "computerName": "vm-ante-jump",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]"
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', 'nic-ante-antic-jump')]"
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', 'nic-ante-antic-jump')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines",
+              "apiVersion": "2021-11-01",
+              "name": "vm-ivo-ivic-web",
+              "location": "[parameters('location')]",
+              "tags": {
+                "course": "test",
+                "user": "ivo.ivic",
+                "role": "student",
+                "type": "wordpress",
+                "environment": "[parameters('environment')]"
+              },
+              "properties": {
+                "hardwareProfile": {
+                  "vmSize": "Standard_B1s"
+                },
+                "storageProfile": {
+                  "imageReference": {
+                    "publisher": "Canonical",
+                    "offer": "0001-com-ubuntu-server-jammy",
+                    "sku": "22_04-lts-gen2",
+                    "version": "latest"
+                  },
+                  "osDisk": {
+                    "createOption": "FromImage",
+                    "diskSizeGB": 32,
+                    "managedDisk": {
+                      "storageAccountType": "StandardSSD_LRS"
+                    },
+                    "caching": "ReadWrite"
+                  },
+                  "dataDisks": [
+                    {
+                      "createOption": "Empty",
+                      "lun": 0,
+                      "diskSizeGB": 32,
+                      "managedDisk": {
+                        "storageAccountType": "StandardSSD_LRS"
+                      }
+                    }
+                  ]
+                },
+                "osProfile": {
+                  "computerName": "vm-ivo-web",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]"
+                },
+                "networkProfile": {
+                  "networkInterfaces": [
+                    {
+                      "id": "[resourceId('Microsoft.Network/networkInterfaces', 'nic-ivo-ivic-web')]"
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', 'nic-ivo-ivic-web')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "apiVersion": "2021-11-01",
+              "name": "[format('{0}/{1}', 'vm-ivo-ivic-web', 'wordpress-setup')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                  "fileUris": [
+                    "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/application-workloads/wordpress/wordpress-single-vm-ubuntu/install_wordpress.sh"
+                  ],
+                  "commandToExecute": "bash install_wordpress.sh"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', 'vm-ivo-ivic-web')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "vmIds": {
+              "type": "array",
+              "value": [
+                "[resourceId('Microsoft.Compute/virtualMachines', 'vm-marko-maric-jump')]",
+                "[resourceId('Microsoft.Compute/virtualMachines', 'vm-ante-antic-jump')]",
+                "[resourceId('Microsoft.Compute/virtualMachines', 'vm-ivo-ivic-web')]"
+              ]
+            },
+            "vmNames": {
+              "type": "array",
+              "value": [
+                "vm-marko-maric-jump",
+                "vm-ante-antic-jump",
+                "vm-ivo-ivic-web"
+              ]
+            },
+            "jumpHostIP": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', format('pip-jump-{0}', parameters('environment'))), '2021-05-01').ipAddress]"
+            },
+            "wordpressVM": {
+              "type": "string",
+              "value": "vm-ivo-ivic-web"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-cloudlearn-{0}', parameters('environment'))), 'Microsoft.Resources/deployments', 'network-deployment')]",
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', format('rg-cloudlearn-{0}', parameters('environment')))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "resourceGroupName": {
+      "type": "string",
+      "value": "[format('rg-cloudlearn-{0}', parameters('environment'))]"
+    },
+    "networkInfo": {
+      "type": "object",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-cloudlearn-{0}', parameters('environment'))), 'Microsoft.Resources/deployments', 'network-deployment'), '2022-09-01').outputs]"
+    },
+    "computeInfo": {
+      "type": "object",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-cloudlearn-{0}', parameters('environment'))), 'Microsoft.Resources/deployments', 'compute-deployment'), '2022-09-01').outputs]"
+    },
+    "storageInfo": {
+      "type": "object",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, format('rg-cloudlearn-{0}', parameters('environment'))), 'Microsoft.Resources/deployments', 'storage-deployment'), '2022-09-01').outputs]"
+    },
+    "deploymentSummary": {
+      "type": "string",
+      "value": "CloudLearn environment deployed successfully with 3 VMs (due to student quota limits)"
+    }
+  }
+}
