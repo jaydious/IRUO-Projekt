@@ -1,0 +1,20 @@
+#cloud-config
+# DevOps Lead VM - centralni cvor voditelja tima.
+# Ima alate za upravljanje i pristup svim instancama (preko privatnih NIC-ova).
+hostname: ts-tst-lead
+package_update: true
+packages:
+  - vim
+  - tmux
+  - ansible
+  - python3-pip
+  - jq
+write_files:
+  - path: /etc/profile.d/techsprint.sh
+    content: |
+      # OpenStack CLI alias za voditelja (member rola na svim projektima).
+      alias vms-status='openstack server list --all-projects'
+      echo "DevOps Lead VM - upravljanje svim TechSprint instancama"
+runcmd:
+  - pip3 install python-openstackclient
+  - echo "Lead VM: koristite 'openstack server start/stop <id>' za upravljanje svim VM-ovima" > /etc/motd

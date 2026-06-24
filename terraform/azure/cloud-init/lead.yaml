@@ -1,0 +1,16 @@
+#cloud-config
+# DevOps Lead VM na Azureu - centralni cvor voditelja tima.
+# Pristup iskljucivo preko Azure Bastiona; sadrzi alate za upravljanje svim VM.
+hostname: vm-ts-tst-lead
+package_update: true
+packages:
+  - vim
+  - tmux
+  - jq
+  - python3-pip
+runcmd:
+  # Azure CLI za upravljanje stanjem svih VM-ova (start/stop/restart).
+  - rpm --import https://packages.microsoft.com/keys/microsoft.asc
+  - dnf install -y https://packages.microsoft.com/config/rhel/9/packages-microsoft-prod.rpm || true
+  - dnf install -y azure-cli || true
+  - echo "DevOps Lead VM: 'az vm start/stop/restart -g <rg> -n <vm>' za sve okoline" > /etc/motd

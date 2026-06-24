@@ -1,0 +1,22 @@
+#cloud-config
+# Jump host (bastion) - jedini javno dostupan cvor.
+# Sluzi kao ulazna tocka; ne hosta aplikaciju.
+hostname: ts-tst-jump
+package_update: true
+packages:
+  - vim
+  - tmux
+  - fail2ban
+  - mosh
+write_files:
+  - path: /etc/ssh/sshd_config.d/60-bastion.conf
+    content: |
+      # Bastion ojacavanje: bez lozinki, samo kljucevi, bez root logina.
+      PasswordAuthentication no
+      PermitRootLogin no
+      AllowAgentForwarding yes
+      X11Forwarding no
+runcmd:
+  - systemctl enable --now fail2ban
+  - systemctl restart sshd
+  - echo "TechSprint jump host spreman - koristite ProxyJump za pristup dev VM-ovima" > /etc/motd

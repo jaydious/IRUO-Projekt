@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# openrc.sh.example - primjer OpenStack RC datoteke (kopirati u openrc.sh i popuniti).
+# Prije pokretanja Terraforma:  source openrc.sh
+#
+# Terraform se autenticira kao cloud-admin jer kreira odvojene projekte/korisnike.
+export OS_AUTH_URL="https://openstack.example.local:5000/v3"
+export OS_IDENTITY_API_VERSION=3
+export OS_PROJECT_NAME="admin"
+export OS_PROJECT_DOMAIN_NAME="Default"
+export OS_USERNAME="admin"
+export OS_USER_DOMAIN_NAME="Default"
+export OS_PASSWORD="<lozinka-admin-korisnika>"
+export OS_REGION_NAME="RegionOne"
+export OS_INTERFACE="public"
