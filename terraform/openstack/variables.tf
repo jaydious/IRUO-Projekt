@@ -83,3 +83,15 @@ variable "name_prefix" {
   type        = string
   default     = "ts-tst"
 }
+
+# Kada je true, Neutron resursi (mreze, portovi, security grupe, LB) kreiraju se
+# u projektu pojedinog programera (puna multi-tenant izolacija). Kada je false,
+# kreiraju se u projektu autenticiranog korisnika (admin) - potrebno na okolinama
+# gdje provider kreira Nova instance u admin projektu, pa cross-tenant portovi ne
+# bi mogli biti vezani na instance ("Port not usable for instance"). Izolacija je
+# i u tom slucaju ocuvana zasebnim mrezama i security grupama po programeru.
+variable "use_tenant_isolation" {
+  description = "Kreirati Neutron resurse u projektu programera (true) ili u admin projektu (false)."
+  type        = bool
+  default     = true
+}

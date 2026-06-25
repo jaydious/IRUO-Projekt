@@ -43,6 +43,12 @@ if ! openstack flavor show ts.smoke >/dev/null 2>&1; then
 fi
 openstack flavor show ts.smoke -f value -c name -c ram -c vcpus -c disk
 
+echo "== 3b) snizi rhel8 min_ram na 768 (lab ima ~5 GB slobodnog RAM-a) =="
+# rhel8 image ima min_ram 2048; lab nema dovoljno RAM-a za vise 2 GB instanci.
+# Snizavamo min_ram da bi 768 MB flavor bio prihvacen (reverzibilno: --min-ram 2048).
+openstack image set rhel8 --min-ram 768 || true
+openstack image show rhel8 -f value -c min_ram -c name
+
 echo "== 4) cl110.auto.tfvars =="
 REGION="${OS_REGION_NAME:-regionOne}"
 cat > "$REPO_ROOT/terraform/openstack/cl110.auto.tfvars" <<TFV
@@ -58,6 +64,10 @@ os_disk_size_gb       = 10
 data_disk_size_gb     = 5
 ssh_public_key_path   = "~/.ssh/techsprint_id_rsa.pub"
 admin_cidr            = "0.0.0.0/0"
+# Lab: provider kreira Nova instance u admin projektu, pa Neutron resurse drzimo
+# u admin projektu (inace "Port not usable for instance"). Izolacija ostaje
+# zasebnim mrezama/security grupama; Keystone projekti/role i dalje se kreiraju.
+use_tenant_isolation  = false
 common_tags = {
   project     = "techsprint"
   environment = "testing"

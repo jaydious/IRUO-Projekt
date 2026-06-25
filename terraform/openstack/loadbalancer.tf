@@ -11,7 +11,7 @@ resource "openstack_lb_loadbalancer_v2" "moodle" {
   name          = "${var.name_prefix}-lb-${each.key}"
   vip_subnet_id = openstack_networking_subnet_v2.dev[each.key].id
   vip_address   = local.moodle_ips[each.key].vip
-  tenant_id     = openstack_identity_project_v3.dev[each.key].id
+  tenant_id     = local.dev_tenant_id[each.key]
   tags          = [for k, v in var.common_tags : "${k}=${v}"]
 }
 

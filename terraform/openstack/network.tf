@@ -21,14 +21,14 @@ data "openstack_networking_network_v2" "external" {
 # ----------------------------- HUB MREZA -----------------------------------
 resource "openstack_networking_network_v2" "hub" {
   name           = "${var.name_prefix}-net-hub"
-  tenant_id      = openstack_identity_project_v3.hub.id
+  tenant_id      = local.hub_tenant_id
   admin_state_up = true
   tags           = [for k, v in var.common_tags : "${k}=${v}"]
 }
 
 resource "openstack_networking_subnet_v2" "hub" {
   name            = "${var.name_prefix}-subnet-hub"
-  tenant_id       = openstack_identity_project_v3.hub.id
+  tenant_id       = local.hub_tenant_id
   network_id      = openstack_networking_network_v2.hub.id
   cidr            = local.hub_cidr
   gateway_ip      = local.hub_gateway
@@ -38,7 +38,7 @@ resource "openstack_networking_subnet_v2" "hub" {
 
 resource "openstack_networking_router_v2" "hub" {
   name                = "${var.name_prefix}-rtr-hub"
-  tenant_id           = openstack_identity_project_v3.hub.id
+  tenant_id           = local.hub_tenant_id
   admin_state_up      = true
   external_network_id = data.openstack_networking_network_v2.external.id
 }
@@ -53,7 +53,7 @@ resource "openstack_networking_network_v2" "dev" {
   for_each = local.developers
 
   name           = "${var.name_prefix}-net-${each.key}"
-  tenant_id      = openstack_identity_project_v3.dev[each.key].id
+  tenant_id      = local.dev_tenant_id[each.key]
   admin_state_up = true
   tags           = [for k, v in var.common_tags : "${k}=${v}"]
 }
@@ -62,7 +62,7 @@ resource "openstack_networking_subnet_v2" "dev" {
   for_each = local.developers
 
   name            = "${var.name_prefix}-subnet-${each.key}"
-  tenant_id       = openstack_identity_project_v3.dev[each.key].id
+  tenant_id       = local.dev_tenant_id[each.key]
   network_id      = openstack_networking_network_v2.dev[each.key].id
   cidr            = local.dev_cidrs[each.key]
   gateway_ip      = local.dev_gateway[each.key]
@@ -75,7 +75,7 @@ resource "openstack_networking_router_v2" "dev" {
   for_each = local.developers
 
   name                = "${var.name_prefix}-rtr-${each.key}"
-  tenant_id           = openstack_identity_project_v3.dev[each.key].id
+  tenant_id           = local.dev_tenant_id[each.key]
   admin_state_up      = true
   external_network_id = data.openstack_networking_network_v2.external.id
 }
@@ -93,7 +93,7 @@ resource "openstack_networking_port_v2" "jump_in_dev" {
   for_each = local.developers
 
   name           = "${var.name_prefix}-port-jump-${each.key}"
-  tenant_id      = openstack_identity_project_v3.dev[each.key].id
+  tenant_id      = local.dev_tenant_id[each.key]
   network_id     = openstack_networking_network_v2.dev[each.key].id
   admin_state_up = true
 
@@ -110,7 +110,7 @@ resource "openstack_networking_port_v2" "lead_in_dev" {
   for_each = local.developers
 
   name           = "${var.name_prefix}-port-lead-${each.key}"
-  tenant_id      = openstack_identity_project_v3.dev[each.key].id
+  tenant_id      = local.dev_tenant_id[each.key]
   network_id     = openstack_networking_network_v2.dev[each.key].id
   admin_state_up = true
 

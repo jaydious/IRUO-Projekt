@@ -13,7 +13,7 @@
 resource "openstack_networking_secgroup_v2" "jump" {
   name        = "${var.name_prefix}-sg-jump"
   description = "Security grupa za jump host (bastion) - jedini javni ulaz."
-  tenant_id   = openstack_identity_project_v3.hub.id
+  tenant_id   = local.hub_tenant_id
   tags        = [for k, v in var.common_tags : "${k}=${v}"]
 }
 
@@ -40,7 +40,7 @@ resource "openstack_networking_secgroup_rule_v2" "jump_egress" {
 resource "openstack_networking_secgroup_v2" "lead" {
   name        = "${var.name_prefix}-sg-lead"
   description = "Security grupa za DevOps Lead VM."
-  tenant_id   = openstack_identity_project_v3.hub.id
+  tenant_id   = local.hub_tenant_id
   tags        = [for k, v in var.common_tags : "${k}=${v}"]
 }
 
@@ -69,7 +69,7 @@ resource "openstack_networking_secgroup_v2" "app" {
 
   name        = "${var.name_prefix}-sg-app-${each.key}"
   description = "Security grupa Moodle instanci programera ${each.key}."
-  tenant_id   = openstack_identity_project_v3.dev[each.key].id
+  tenant_id   = local.dev_tenant_id[each.key]
   tags        = [for k, v in var.common_tags : "${k}=${v}"]
 }
 

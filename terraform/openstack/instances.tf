@@ -34,7 +34,7 @@ locals {
 # ------------------------------- JUMP HOST ---------------------------------
 resource "openstack_networking_port_v2" "jump_hub" {
   name               = "${var.name_prefix}-port-jump-hub"
-  tenant_id          = openstack_identity_project_v3.hub.id
+  tenant_id          = local.hub_tenant_id
   network_id         = openstack_networking_network_v2.hub.id
   admin_state_up     = true
   security_group_ids = [openstack_networking_secgroup_v2.jump.id]
@@ -47,7 +47,7 @@ resource "openstack_networking_port_v2" "jump_hub" {
 
 resource "openstack_networking_floatingip_v2" "jump" {
   pool      = var.external_network_name
-  tenant_id = openstack_identity_project_v3.hub.id
+  tenant_id = local.hub_tenant_id
   tags      = [for k, v in var.common_tags : "${k}=${v}"]
 }
 
@@ -90,7 +90,7 @@ resource "openstack_compute_instance_v2" "jump" {
 # ----------------------------- DEVOPS LEAD VM ------------------------------
 resource "openstack_networking_port_v2" "lead_hub" {
   name               = "${var.name_prefix}-port-lead-hub"
-  tenant_id          = openstack_identity_project_v3.hub.id
+  tenant_id          = local.hub_tenant_id
   network_id         = openstack_networking_network_v2.hub.id
   admin_state_up     = true
   security_group_ids = [openstack_networking_secgroup_v2.lead.id]
@@ -136,7 +136,7 @@ resource "openstack_networking_port_v2" "moodle" {
   for_each = local.moodle_nodes
 
   name               = "${var.name_prefix}-port-moodle-${each.key}"
-  tenant_id          = openstack_identity_project_v3.dev[each.value.dev].id
+  tenant_id          = local.dev_tenant_id[each.value.dev]
   network_id         = openstack_networking_network_v2.dev[each.value.dev].id
   admin_state_up     = true
   security_group_ids = [openstack_networking_secgroup_v2.app[each.value.dev].id]
