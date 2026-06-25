@@ -33,7 +33,7 @@ resource "random_password" "swift_temp_url_key" {
 
 # ---------------------------- DATOTECNA POHRANA ----------------------------
 resource "openstack_sharedfilesystem_share_v2" "backup" {
-  for_each = local.developers
+  for_each = var.enable_file_share ? local.developers : {}
 
   name             = "${var.name_prefix}-file-${each.key}"
   description      = "Datotecna pohrana (backup) za programera ${each.key}."
@@ -49,7 +49,7 @@ resource "openstack_sharedfilesystem_share_v2" "backup" {
 # ACL (least-privilege): NFS -> pristup po IP-u ogranicen na dev podmrezu;
 # CEPHFS -> pristup preko cephx korisnika (po programeru).
 resource "openstack_sharedfilesystem_share_access_v2" "backup" {
-  for_each = local.developers
+  for_each = var.enable_file_share ? local.developers : {}
 
   share_id     = openstack_sharedfilesystem_share_v2.backup[each.key].id
   access_type  = var.share_proto == "CEPHFS" ? "cephx" : "ip"

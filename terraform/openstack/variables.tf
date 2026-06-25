@@ -114,3 +114,11 @@ variable "share_proto" {
   type        = string
   default     = "NFS"
 }
+
+# Manila datotecna pohrana. Na okolinama gdje Manila backend nije potpuno
+# funkcionalan (npr. CephFS share zavrsi u 'error' stanju) postaviti na false.
+variable "enable_file_share" {
+  description = "Kreirati Manila datotecnu pohranu (share + ACL)."
+  type        = bool
+  default     = true
+}

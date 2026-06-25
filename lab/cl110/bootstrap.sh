@@ -71,7 +71,9 @@ use_tenant_isolation  = false
 # Octavia u ovom labu ne uspije finalizirati amphoru (context deadline exceeded),
 # pa za cist prolaz preskacemo LB. LB je u dizajnu zadano ukljucen (vidi varijablu).
 enable_loadbalancer   = false
-# Manila backend u CL110 labu podrzava samo CEPHFS protokol (ne NFS).
+# Manila backend u CL110 labu (CephFS) zavrsi share u 'error' stanju, pa ga za
+# cist prolaz preskacemo. Datotecna pohrana je u dizajnu zadano ukljucena (NFS).
+enable_file_share     = false
 share_proto           = "CEPHFS"
 common_tags = {
   project     = "techsprint"
