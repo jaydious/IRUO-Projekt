@@ -28,13 +28,9 @@ resource "openstack_networking_secgroup_rule_v2" "jump_ssh_in" {
   description        = "SSH ulaz na jump host."
 }
 
-resource "openstack_networking_secgroup_rule_v2" "jump_egress" {
-  direction         = "egress"
-  ethertype         = "IPv4"
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.jump.id
-  description        = "Izlazni promet (SSH prema svim VM-ovima, paketi)."
-}
+# Napomena: Neutron svakoj security grupi automatski dodaje default egress
+# pravilo (dozvoli sav izlazni promet), pa eksplicitno "allow all egress"
+# pravilo nije potrebno i izaziva 409 Conflict. Izlaz je dakle dozvoljen po defaultu.
 
 # ----------------------------- DEVOPS LEAD ---------------------------------
 resource "openstack_networking_secgroup_v2" "lead" {
@@ -55,13 +51,7 @@ resource "openstack_networking_secgroup_rule_v2" "lead_ssh_from_jump" {
   description        = "SSH na lead VM iskljucivo iz hub (jump host) mreze."
 }
 
-resource "openstack_networking_secgroup_rule_v2" "lead_egress" {
-  direction         = "egress"
-  ethertype         = "IPv4"
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.lead.id
-  description        = "Izlazni promet (SSH prema svim dev VM-ovima)."
-}
+# (default egress pravilo dodaje Neutron automatski - vidi napomenu gore)
 
 # ----------------------- MOODLE (PO PROGRAMERU) ----------------------------
 resource "openstack_networking_secgroup_v2" "app" {
@@ -127,12 +117,4 @@ resource "openstack_networking_secgroup_rule_v2" "app_https" {
   description        = "HTTPS od load balancera unutar dev podmreze."
 }
 
-resource "openstack_networking_secgroup_rule_v2" "app_egress" {
-  for_each = local.developers
-
-  direction         = "egress"
-  ethertype         = "IPv4"
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.app[each.key].id
-  description        = "Izlazni promet na Internet (paketi, NFS, objektna pohrana)."
-}
+# (default egress pravilo dodaje Neutron automatski - vidi napomenu gore)

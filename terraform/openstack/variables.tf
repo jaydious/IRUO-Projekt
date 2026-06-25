@@ -95,3 +95,13 @@ variable "use_tenant_isolation" {
   type        = bool
   default     = true
 }
+
+# Octavia load balancer. Na nekim okolinama (npr. resursno ograniceni labovi)
+# Octavia ne uspije finalizirati amphoru pa LB ode u ERROR ("context deadline
+# exceeded"). Postavljanjem na false preskace se kreiranje LB-a (ostatak okoline
+# se i dalje deploya); zadano je true (puna arhitektura s balanserom).
+variable "enable_loadbalancer" {
+  description = "Kreirati Octavia load balancer i pripadne resurse."
+  type        = bool
+  default     = true
+}

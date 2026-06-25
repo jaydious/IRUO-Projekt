@@ -6,7 +6,7 @@
 ###############################################################################
 
 resource "openstack_lb_loadbalancer_v2" "moodle" {
-  for_each = local.developers
+  for_each = var.enable_loadbalancer ? local.developers : {}
 
   name          = "${var.name_prefix}-lb-${each.key}"
   vip_subnet_id = openstack_networking_subnet_v2.dev[each.key].id
@@ -16,7 +16,7 @@ resource "openstack_lb_loadbalancer_v2" "moodle" {
 }
 
 resource "openstack_lb_listener_v2" "http" {
-  for_each = local.developers
+  for_each = var.enable_loadbalancer ? local.developers : {}
 
   name            = "${var.name_prefix}-lsnr-${each.key}"
   protocol        = "HTTP"
@@ -25,7 +25,7 @@ resource "openstack_lb_listener_v2" "http" {
 }
 
 resource "openstack_lb_pool_v2" "http" {
-  for_each = local.developers
+  for_each = var.enable_loadbalancer ? local.developers : {}
 
   name        = "${var.name_prefix}-pool-${each.key}"
   protocol    = "HTTP"
@@ -34,7 +34,7 @@ resource "openstack_lb_pool_v2" "http" {
 }
 
 resource "openstack_lb_monitor_v2" "http" {
-  for_each = local.developers
+  for_each = var.enable_loadbalancer ? local.developers : {}
 
   name        = "${var.name_prefix}-hm-${each.key}"
   pool_id     = openstack_lb_pool_v2.http[each.key].id
@@ -48,7 +48,7 @@ resource "openstack_lb_monitor_v2" "http" {
 
 # Clanovi poola = dva Moodle cvora svakog programera.
 resource "openstack_lb_member_v2" "moodle" {
-  for_each = local.moodle_nodes
+  for_each = var.enable_loadbalancer ? local.moodle_nodes : {}
 
   name          = "${var.name_prefix}-mbr-${each.key}"
   pool_id       = openstack_lb_pool_v2.http[each.value.dev].id

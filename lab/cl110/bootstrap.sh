@@ -68,6 +68,9 @@ admin_cidr            = "0.0.0.0/0"
 # u admin projektu (inace "Port not usable for instance"). Izolacija ostaje
 # zasebnim mrezama/security grupama; Keystone projekti/role i dalje se kreiraju.
 use_tenant_isolation  = false
+# Octavia u ovom labu ne uspije finalizirati amphoru (context deadline exceeded),
+# pa za cist prolaz preskacemo LB. LB je u dizajnu zadano ukljucen (vidi varijablu).
+enable_loadbalancer   = false
 common_tags = {
   project     = "techsprint"
   environment = "testing"
