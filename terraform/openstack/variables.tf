@@ -105,3 +105,12 @@ variable "enable_loadbalancer" {
   type        = bool
   default     = true
 }
+
+# Manila share protokol ovisi o backendu. Klasicni NFS je zadan; neke okoline
+# (npr. CephFS backend) podrzavaju samo CEPHFS, gdje se i pristup definira
+# preko cephx korisnika umjesto IP ACL-a.
+variable "share_proto" {
+  description = "Manila share protokol: NFS (zadano) ili CEPHFS."
+  type        = string
+  default     = "NFS"
+}
