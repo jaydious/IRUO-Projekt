@@ -29,3 +29,6 @@ id_rsa*
 Thumbs.db
 *.swp
 ~$*.docx
+
+# Raw screenshots (mogu sadrzavati GLS session token u URL-u)
+screenshots/
