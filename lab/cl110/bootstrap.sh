@@ -54,7 +54,7 @@ REGION="${OS_REGION_NAME:-regionOne}"
 cat > "$REPO_ROOT/terraform/openstack/cl110.auto.tfvars" <<TFV
 # Auto-generirano za Red Hat Academy CL110-16.1 lab (override terraform.tfvars)
 region                = "${REGION}"
-users_csv             = "../../scripts/users-smoke.csv"
+users_csv             = "../../scripts/users.csv"
 external_network_name = "provider-datacentre"
 dns_servers           = ["172.25.250.254"]
 image_name            = "rhel8"
