@@ -3,8 +3,8 @@
 ###############################################################################
 
 output "bastion_public_ip" {
-  description = "Javni IP Azure Bastiona - jedina javna tocka ulaza."
-  value       = azurerm_public_ip.bastion.ip_address
+  description = "Javni IP Azure Bastiona - jedina javna tocka ulaza (null ako je Bastion iskljucen)."
+  value       = one(azurerm_public_ip.bastion[*].ip_address)
 }
 
 output "devops_lead_vm" {

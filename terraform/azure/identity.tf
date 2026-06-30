@@ -8,7 +8,8 @@
 resource "azurerm_user_assigned_identity" "moodle" {
   for_each = local.developers
 
-  name                = "id-${var.name_prefix}-moodle-${each.key}"
+  # Managed identity ime ne smije sadrzavati tocku -> zamijeni "." s "-".
+  name                = "id-${var.name_prefix}-moodle-${replace(each.key, ".", "-")}"
   resource_group_name = azurerm_resource_group.dev[each.key].name
   location            = azurerm_resource_group.dev[each.key].location
   tags                = merge(var.common_tags, { owner = each.key })

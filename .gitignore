@@ -32,3 +32,6 @@ Thumbs.db
 
 # Raw screenshots (mogu sadrzavati GLS session token u URL-u)
 screenshots/
+
+# Lokalni override tfvars (subscription id, okolinske prilagodbe)
+*.auto.tfvars

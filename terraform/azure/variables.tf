@@ -68,6 +68,25 @@ variable "create_management_group" {
   default     = false
 }
 
+# Kreiranje novih Entra ID (Azure AD) korisnika i grupa zahtijeva administratorske
+# ovlasti nad imenikom. U institucijskom tenantu (npr. studentski racun) toga nema,
+# pa se postavlja na false: tada se preskace kreiranje AAD korisnika/grupa i njihove
+# dodjele rola, a custom rola se demonstrira dodjelom prijavljenom korisniku.
+# Puni dizajn (korisnici iz CSV-a) ostaje u kodu i koristi se uz tenant-admin ovlasti.
+variable "enable_aad_users" {
+  description = "Kreirati Entra ID korisnike/grupe iz CSV-a (true) ili preskociti (false)."
+  type        = bool
+  default     = true
+}
+
+# Azure Bastion je spor (~10 min create/destroy) i najskuplji dio. Za brze/jeftine
+# testne deploymente moze se iskljuciti; u dizajnu je zadano ukljucen (jedini javni ulaz).
+variable "enable_bastion" {
+  description = "Kreirati Azure Bastion (jedini javni ulaz). false za brze/jeftine testove."
+  type        = bool
+  default     = true
+}
+
 variable "common_tags" {
   description = "Tagovi koji se primjenjuju na sve resurse."
   type        = map(string)
