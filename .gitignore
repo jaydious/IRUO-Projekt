@@ -35,3 +35,9 @@ screenshots/
 
 # Lokalni override tfvars (subscription id, okolinske prilagodbe)
 *.auto.tfvars
+
+# Video skripta (samo lokalno, ne u git)
+video_skripta.txt
+# Dokumentacija i slike (predaju se preko Infoeduke / docx, ne trebaju u git repou koda)
+dokumentacija/
+diagrams/
